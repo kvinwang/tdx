@@ -16,7 +16,7 @@ fi
 
 qemu-system-x86_64 \
 		   -accel kvm \
-		   -m 2G -smp 16 \
+		   -m 16G -smp 16 \
 		   -name ${PROCESS_NAME},process=${PROCESS_NAME},debug-threads=on \
 		   -cpu host \
 		   -chardev stdio,id=ser0,signal=on -serial chardev:ser0 \
