@@ -279,8 +279,9 @@ EOT
 setup_guest_image() {
     info "Run setup scripts inside the guest image. Please wait ..."
     virt-customize -a ${TMP_GUEST_IMG_PATH} \
-       --mkdir /tmp/tdx/ \
+       --mkdir /tmp/tdx/guest-tools \
        --copy-in ${SCRIPT_DIR}/setup.sh:/tmp/tdx/ \
+       --copy-in ${SCRIPT_DIR}/../tdx_quote:/tmp/tdx/guest-tools/ \
        --copy-in ${SCRIPT_DIR}/../../setup-tdx-guest.sh:/tmp/tdx/ \
        --copy-in ${SCRIPT_DIR}/../../setup-tdx-common:/tmp/tdx \
        --copy-in ${SCRIPT_DIR}/../../setup-tdx-config:/tmp/tdx \
