@@ -19,7 +19,7 @@ rafs_premount() {
 		echo "RAFS: Initializing"
 		echo "$key_phrase" | cryptsetup luksFormat --type luks2 --cipher aes-xts-plain64 --integrity hmac-sha256 --pbkdf pbkdf2 -d- ${ROOT}
 		echo "$key_phrase" | cryptsetup luksOpen --type luks2 -d- ${ROOT} rootfs_crypt
-		mkfs.ext4 -L rootfs /dev/mapper/rootfs_crypt
+		mkfs.ext4 -L cloudimg-rootfs /dev/mapper/rootfs_crypt
 		mount /dev/mapper/rootfs_crypt /root
 		echo "[$(date +%H:%M:%S)] RAFS: Extracting rootfs, this may take a while..."
 		echo "TODO: calculate hash of rootfs"
