@@ -22,8 +22,8 @@ rafs_premount() {
 		echo "$key_phrase" | cryptsetup luksOpen --type luks2 -d- ${ROOT} rootfs_crypt
 		mkfs.ext4 -L cloudimg-rootfs /dev/mapper/rootfs_crypt
 		mount /dev/mapper/rootfs_crypt /root
-		echo "[$(date +%H:%M:%S)] RAFS: Extracting rootfs, this may take a while..."
 		echo "TODO: calculate hash of rootfs"
+		echo "[$(date +%H:%M:%S)] RAFS: Extracting rootfs, this may take a while..."
 		# (cd /root && gzip -dc /config/rootfs.gz | stream_hash | cpio -i)
 		if [ -e /config/rootfs.cpio ]; then
 			(cd /root && cpio -i < /config/rootfs.cpio)
@@ -36,7 +36,7 @@ rafs_premount() {
 		echo "[$(date +%H:%M:%S)] RAFS: Done"
 		umount /root
 	else
-		echo "[$(date)] RAFS: Mounting"
+		echo "[$(date +%H:%M:%S)] RAFS: Mounting"
 		echo "$key_phrase" | cryptsetup luksOpen --type luks2 -d- ${ROOT} rootfs_crypt
 	fi
 	umount /config
