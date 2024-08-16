@@ -38,7 +38,7 @@ TDX_PPA_ATTESTATION=tdx-attestation-release
 # Set to 1 to enable
 # By default, the attestation components are not installed
 ################################################################
-TDX_SETUP_ATTESTATION=0
+TDX_SETUP_ATTESTATION=1
 
 ################################################################
 # HOST                                                         #

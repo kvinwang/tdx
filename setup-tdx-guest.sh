@@ -89,6 +89,7 @@ apt install --yes --allow-downgrades linux-modules-extra-${KERNEL_RELEASE}
 if [[ "${TDX_SETUP_ATTESTATION}" == "1" ]]; then
   "${SCRIPT_DIR}"/attestation/setup-attestation-guest.sh
   make install -C "${SCRIPT_DIR}"/guest-tools/tdx_quote
+  make install -C "${SCRIPT_DIR}"/guest-tools/attestation-agent
 else
   echo "Skip installing attestation components..."
 fi

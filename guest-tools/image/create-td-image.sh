@@ -282,6 +282,7 @@ setup_guest_image() {
        --mkdir /tmp/tdx/guest-tools \
        --copy-in ${SCRIPT_DIR}/setup.sh:/tmp/tdx/ \
        --copy-in ${SCRIPT_DIR}/../tdx_quote:/tmp/tdx/guest-tools/ \
+       --copy-in ${SCRIPT_DIR}/../attestation-agent:/tmp/tdx/guest-tools/ \
        --copy-in ${SCRIPT_DIR}/../../setup-tdx-guest.sh:/tmp/tdx/ \
        --copy-in ${SCRIPT_DIR}/../../setup-tdx-common:/tmp/tdx \
        --copy-in ${SCRIPT_DIR}/../../setup-tdx-config:/tmp/tdx \
