@@ -3,6 +3,7 @@
 # Copy the attestation-agent script
 cp attestation_agent.py /usr/local/bin/attestation_agent.py
 
+touch /etc/attestation_data
 # Create a systemd service file
 cat > /etc/systemd/system/attestation-agent.service << EOF
 [Unit]
