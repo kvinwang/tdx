@@ -1,0 +1,68 @@
+#!/bin/sh
+
+rafs_premount() {
+	local key_phrase initialized=0
+
+	mkdir -p /config
+	mount -t 9p -o trans=virtio,version=9p2000.L config /config
+	if [ -e /config/key_phrase ]; then
+		echo "RAFS: Key phrase found"
+		key_phrase="$(cat /config/key_phrase)"
+		initialized=1
+	else
+		key_phrase="$(head -c 128 /dev/urandom | tr -dc A-Za-z0-9)"
+		echo "RAFS: New key phrase: $key_phrase"
+		echo "$key_phrase" > /config/key_phrase
+	fi
+
+	if [ $initialized -eq 0 ]; then
+		echo "RAFS: Initializing"
+		echo "$key_phrase" | cryptsetup luksFormat --type luks2 --cipher aes-xts-plain64 --integrity hmac-sha256 --pbkdf pbkdf2 -d- ${ROOT}
+		echo "$key_phrase" | cryptsetup luksOpen --type luks2 -d- ${ROOT} rootfs_crypt
+		mkfs.ext4 -L rootfs /dev/mapper/rootfs_crypt
+		mount /dev/mapper/rootfs_crypt /root
+		echo "[$(date +%H:%M:%S)] RAFS: Extracting rootfs, this may take a while..."
+		echo "TODO: calculate hash of rootfs"
+		# (cd /root && gzip -dc /config/rootfs.gz | stream_hash | cpio -i)
+		if [ -e /config/rootfs.cpio ]; then
+			(cd /root && cpio -i < /config/rootfs.cpio)
+		elif [ -e /config/rootfs.gz ]; then
+			(cd /root && gzip -dc /config/rootfs.gz | cpio -i)
+		else
+			echo "RAFS: No rootfs found"
+			exit 1
+		fi
+		echo "[$(date +%H:%M:%S)] RAFS: Done"
+		umount /root
+	else
+		echo "[$(date)] RAFS: Mounting"
+		echo "$key_phrase" | cryptsetup luksOpen --type luks2 -d- ${ROOT} rootfs_crypt
+	fi
+	umount /config
+	ROOT=/dev/mapper/rootfs_crypt
+}
+
+mountroot()
+{
+	echo "RAFS: Mounting root"
+	local_mount_root
+}
+
+mount_top()
+{
+	echo "RAFS: Mounting top"
+	local_top
+}
+
+mount_premount()
+{
+	echo "RAFS: Pre-mounting"
+	rafs_premount
+	local_premount
+}
+
+mount_bottom()
+{
+	echo "RAFS: Bottom mounting"
+	local_bottom
+}
