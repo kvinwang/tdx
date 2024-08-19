@@ -31,7 +31,9 @@ rafs_premount() {
 		else
 			integrity="--integrity ${ROOTINTEGRITY}"
 		fi
+		echo "[$(date +%H:%M:%S)] RAFS: Formatting rootfs"
 		echo "$key_phrase" | cryptsetup luksFormat --type luks2 --cipher aes-xts-plain64 ${integrity} --pbkdf pbkdf2 -d- ${ROOT}
+		echo "[$(date +%H:%M:%S)] RAFS: Formatting rootfs done"
 		echo "$key_phrase" | cryptsetup luksOpen --type luks2 -d- ${ROOT} rootfs_crypt
 		mkfs.ext4 -L cloudimg-rootfs /dev/mapper/rootfs_crypt
 		mount /dev/mapper/rootfs_crypt /root
