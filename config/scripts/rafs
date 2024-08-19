@@ -1,7 +1,7 @@
 #!/bin/sh
 
 rafs_premount() {
-	local key_phrase initialized=0
+	local key_phrase initialized=0 integrity=""
 
 	mkdir -p /config
 	mount -t 9p -o trans=virtio,version=9p2000.L config /config
@@ -26,7 +26,12 @@ rafs_premount() {
 		fi
 
 		echo "RAFS: Initializing"
-		echo "$key_phrase" | cryptsetup luksFormat --type luks2 --cipher aes-xts-plain64 --integrity hmac-sha256 --pbkdf pbkdf2 -d- ${ROOT}
+		if [ -z "${ROOTINTEGRITY}" ]; then
+			integrity=""
+		else
+			integrity="--integrity ${ROOTINTEGRITY}"
+		fi
+		echo "$key_phrase" | cryptsetup luksFormat --type luks2 --cipher aes-xts-plain64 ${integrity} --pbkdf pbkdf2 -d- ${ROOT}
 		echo "$key_phrase" | cryptsetup luksOpen --type luks2 -d- ${ROOT} rootfs_crypt
 		mkfs.ext4 -L cloudimg-rootfs /dev/mapper/rootfs_crypt
 		mount /dev/mapper/rootfs_crypt /root
