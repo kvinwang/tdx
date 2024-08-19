@@ -1,0 +1,10 @@
+export INITIMG=
+
+for x in $(cat /proc/cmdline); do
+	case $x in
+	initimg=*)
+		INITIMG=${x#*=}
+		echo "RAFS: initimg set to ${INITIMG}"
+		;;
+	esac
+done

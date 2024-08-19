@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 
 rafs_premount() {
 	local key_phrase initialized=0
@@ -17,6 +16,15 @@ rafs_premount() {
 	fi
 
 	if [ $initialized -eq 0 ]; then
+		if [ -z "${INITIMG}" ]; then
+			panic "RAFS: initimg not set"
+		else
+			echo "RAFS: Mounting init image ${INITIMG}"
+			INITDATA_DIR=/initdata
+			mkdir -p ${INITDATA_DIR}
+			mount -t ext4 -o ro ${INITIMG} ${INITDATA_DIR}
+		fi
+
 		echo "RAFS: Initializing"
 		echo "$key_phrase" | cryptsetup luksFormat --type luks2 --cipher aes-xts-plain64 --integrity hmac-sha256 --pbkdf pbkdf2 -d- ${ROOT}
 		echo "$key_phrase" | cryptsetup luksOpen --type luks2 -d- ${ROOT} rootfs_crypt
@@ -25,10 +33,10 @@ rafs_premount() {
 		echo "TODO: calculate hash of rootfs"
 		echo "[$(date +%H:%M:%S)] RAFS: Extracting rootfs, this may take a while..."
 		# (cd /root && gzip -dc /config/rootfs.gz | stream_hash | cpio -i)
-		if [ -e /config/rootfs.cpio ]; then
-			(cd /root && cpio -i < /config/rootfs.cpio)
-		elif [ -e /config/rootfs.gz ]; then
-			(cd /root && gzip -dc /config/rootfs.gz | cpio -i)
+		if [ -e ${INITDATA_DIR}/rootfs.cpio ]; then
+			(cd /root && cpio -i < ${INITDATA_DIR}/rootfs.cpio)
+		elif [ -e ${INITDATA_DIR}/rootfs.gz ]; then
+			(cd /root && gzip -dc ${INITDATA_DIR}/rootfs.gz | cpio -i)
 		else
 			echo "RAFS: No rootfs found"
 			exit 1
