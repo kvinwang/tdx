@@ -3,6 +3,7 @@
 # attestation_agent.py
 import base64
 import hashlib
+import json
 import subprocess
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -34,7 +35,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-type", "application/json")
                 self.end_headers()
-                self.wfile.write(bytes(str(response), "utf-8"))
+                self.wfile.write(bytes(json.dumps(response), "utf-8"))
             except Exception as e:
                 self.send_error(500, str(e))
         else:
